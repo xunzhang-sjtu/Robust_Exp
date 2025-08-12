@@ -61,8 +61,8 @@ function Solve_RO(N,N_u,K,A_lb,A_ub,B_lb,B_ub,u,p_dag,psi_lb,psi_ub,phi_lb,phi_u
             for k in 1:K
                 @constraint(model, Y[n,j,k] >= psi_lb * X[j,k])
                 @constraint(model, Y[n,j,k] <= psi_ub * X[j,k])
-                @constraint(model, Y[n,j,k] >= psi_3[n] - psi_ub * (1 - X[j,k]))
-                @constraint(model, Y[n,j,k] <= psi_3[n] - psi_lb * (1 - X[j,k]))
+                # @constraint(model, Y[n,j,k] >= psi_3[n] - psi_ub * (1 - X[j,k]))
+                # @constraint(model, Y[n,j,k] <= psi_3[n] - psi_lb * (1 - X[j,k]))
 
             end
         end
@@ -73,8 +73,8 @@ function Solve_RO(N,N_u,K,A_lb,A_ub,B_lb,B_ub,u,p_dag,psi_lb,psi_ub,phi_lb,phi_u
             for k in 1:K
                 @constraint(model, Z[n,j,k] >= phi_lb * X[j,k])
                 @constraint(model, Z[n,j,k] <= phi_ub * X[j,k])
-                @constraint(model, Z[n,j,k] >= phi_3[n] - phi_ub * (1 - X[j,k]))
-                @constraint(model, Z[n,j,k] <= phi_3[n] - phi_lb * (1 - X[j,k]))
+                # @constraint(model, Z[n,j,k] >= phi_3[n] - phi_ub * (1 - X[j,k]))
+                # @constraint(model, Z[n,j,k] <= phi_3[n] - phi_lb * (1 - X[j,k]))
             end
         end
     end
@@ -226,7 +226,7 @@ function Solve_RO_one_side_exp(N,N_u,K,A_lb,A_ub,B_lb,B_ub,u,p_dag,psi_lb,psi_ub
     for n in 1:N
         for j in 1:N
             for k in 1:K
-                @constraint(model, Y[n,j,k] >= psi_lb * X[j,k])
+                @constraint(model, Y[n,j,k] >= psi_lb[n] * X[j,k])
                 @constraint(model, Y[n,j,k] <= 0.0)
             end
         end
