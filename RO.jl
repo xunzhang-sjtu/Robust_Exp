@@ -227,7 +227,7 @@ function Solve_RO_one_side_exp(N,N_u,K,A_lb,A_ub,B_lb,B_ub,u,p_dag,psi_lb,psi_ub
         for j in 1:N
             for k in 1:K
                 @constraint(model, Y[n,j,k] >= psi_lb[n] * X[j,k])
-                @constraint(model, Y[n,j,k] <= 0.0)
+                @constraint(model, Y[n,j,k] <= psi_ub[n])
             end
         end
     end    
