@@ -53,14 +53,14 @@ function Solve_RO(N,N_u,K,A_lb,A_ub,B_lb,B_ub,u,p_dag,psi_lb,psi_ub,phi_lb,phi_u
     end
 
     for n in 1:N
-        @constraint(model, [phi_3[n],phi_2[n],phi_1[n]] in MOI.ExponentialCone())
+        @constraint(model, [phi_3[n],phi_2[n],phi_1[n]] in MOI.DualExponentialCone())
     end
 
     for n in 1:N
         for j in 1:N
             for k in 1:K
-                @constraint(model, Y[n,j,k] >= psi_lb * X[j,k])
-                @constraint(model, Y[n,j,k] <= psi_ub * X[j,k])
+                @constraint(model, Y[n,j,k] >= psi_lb[n] * X[j,k])
+                @constraint(model, Y[n,j,k] <= psi_ub[n] * X[j,k])
                 # @constraint(model, Y[n,j,k] >= psi_3[n] - psi_ub * (1 - X[j,k]))
                 # @constraint(model, Y[n,j,k] <= psi_3[n] - psi_lb * (1 - X[j,k]))
 
@@ -71,8 +71,8 @@ function Solve_RO(N,N_u,K,A_lb,A_ub,B_lb,B_ub,u,p_dag,psi_lb,psi_ub,phi_lb,phi_u
     for n in 1:N
         for j in 1:N
             for k in 1:K
-                @constraint(model, Z[n,j,k] >= phi_lb * X[j,k])
-                @constraint(model, Z[n,j,k] <= phi_ub * X[j,k])
+                @constraint(model, Z[n,j,k] >= phi_lb[n] * X[j,k])
+                @constraint(model, Z[n,j,k] <= phi_ub[n] * X[j,k])
                 # @constraint(model, Z[n,j,k] >= phi_3[n] - phi_ub * (1 - X[j,k]))
                 # @constraint(model, Z[n,j,k] <= phi_3[n] - phi_lb * (1 - X[j,k]))
             end
