@@ -6,6 +6,14 @@ using StatsFuns
 using DataFrames
 using StatsBase
 
+# ************************ Assortment Pricing Functions *****************************
+# - compute_prob()
+# - generate_choice()
+# - unpack_params()
+# - neg_log_likelihood()
+# - neg_log_likelihood_grad!()
+# - Estimate_MNL_Para()
+# ************************************************************************************
 
 function compute_prob(S,N, U_train, P_train, a_star, b_star)    
     # Step 3: 计算每个样本的选择概率
@@ -36,7 +44,6 @@ function generate_choice(S,N,probs)
     return choices
 end
 
-
 # 将参数向量 vec_theta 展平为 a 和 b 的矩阵
 function unpack_params(vec_theta, N, d_u, d_p)
     offset_a = N * d_u
@@ -44,7 +51,6 @@ function unpack_params(vec_theta, N, d_u, d_p)
     b = reshape(vec_theta[offset_a+1:end], (d_p, N))
     return a, b
 end
-
 
 # 构建负对数似然函数
 function neg_log_likelihood(vec_theta::Vector{Float64}, U_train, P_train, choices, N, d_u, d_p)
@@ -135,3 +141,4 @@ function Estimate_MNL_Para(U_input, P_input, S, N, d_u, d_p, A_true, B_true)
     # println(Matrix(b_hat'))
     return Matrix(a_hat'), Matrix(b_hat')
 end
+
