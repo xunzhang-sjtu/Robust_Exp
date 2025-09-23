@@ -110,6 +110,32 @@ function lasso_objective(theta::AbstractVector, lambda::Float64,X,Y,Z)
 end
 
 
+function parameter_divide(theta_hat,d,p)
+    alpha0_hat = 0.0
+    alpha_hat = zeros(d)
+    beta_hat = zeros(p)
+    A_hat = zeros(d,p)
+
+    idx = 1
+    # 第一部分: 1 和 x_ij
+    alpha0_hat = theta_hat[idx]
+    idx += 1
+
+    alpha_hat = theta_hat[idx:idx+d-1]
+    idx += d
+
+    # 第二部分: 交互项 (z_ik 和 z_ik * x_ij)
+    for k in 1:p
+        beta_hat[k] = theta_hat[idx] # z_ik
+        idx += 1
+        # z_ik * x_ij
+        A_hat[:,k] = theta_hat[idx:idx+d-1]
+        idx += d
+    end
+    return alpha0_hat, alpha_hat, beta_hat, A_hat
+end
+
+
 function estimate_parameters(X::Vector{Matrix{Float64}},Y::Vector{Int64},Z::Matrix{Float64},lambda::Float64, d::Int, p::Int; initial_theta=nothing)
     """
     执行 Lasso-正则化 MLE 估计。
@@ -137,5 +163,9 @@ function estimate_parameters(X::Vector{Matrix{Float64}},Y::Vector{Int64},Z::Matr
     result = optimize(objective_function, initial_theta, LBFGS(), Optim.Options(show_trace=false, g_tol=1e-6, iterations=1000))
     
     theta_hat = Optim.minimizer(result)
-    return theta_hat, result
+
+    alpha0_hat, alpha_hat, beta_hat, A_hat = parameter_divide(theta_hat,d,p)
+
+
+    return alpha0_hat, alpha_hat, beta_hat, A_hat, result
 end
