@@ -2,7 +2,7 @@
 
 julia_version = "1.10.3"
 manifest_format = "2.0"
-project_hash = "efb0cef716e74b9655ac7f08354cb615b5a0831e"
+project_hash = "bd83dbd7c7a7102f4e1bb9210dcbbe8ba05b5636"
 
 [[deps.AliasTables]]
 deps = ["PtrArrays", "Random"]
@@ -241,6 +241,11 @@ version = "1.14.3"
 
     [deps.JSON3.weakdeps]
     ArrowTypes = "31f734f8-188a-4ce0-8406-c8a06bd891cd"
+
+[[deps.LaTeXStrings]]
+git-tree-sha1 = "dda21b8cbd6a6c40d9d02a73230f9d70fed6918c"
+uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+version = "1.4.0"
 
 [[deps.LazyArtifacts]]
 deps = ["Artifacts", "Pkg"]
