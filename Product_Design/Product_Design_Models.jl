@@ -29,7 +29,8 @@ function Product_Design_Ours_ETO(d,nu0, nu, r0, r, C_mat)
         @constraint(model, y[ind] >= 0)
     end
 
-    @constraint(model, C_mat * x .== 1)
+    # @constraint(model, C_mat * x .== 1)
+    @constraint(model, sum(x) >= 1)
     @objective(model, Max,r0 * a1 + r' * y)
     optimize!(model)
     status = JuMP.termination_status(model)
@@ -184,16 +185,16 @@ function Robust_Product_Design_Condense_Parameters(N, n_x, gamma, psi_lb, psi_ub
     # 定义变量
     @variable(model, delta)                           # 标量 δ
     @variable(model, eta[1:N])  
-    @variable(model, omega_0[1:N])    
-    @variable(model, omega[1:N,1:n_x])  
+    @variable(model, omega[1:N])    
+    @variable(model, PI_D[1:N,1:n_x])  
     @variable(model, x[1:n_x], Bin)           
     @variable(model, psi[1:3])                        
     @variable(model, phi[1:3])             
     @variable(model, y[1:n_x])        
     @variable(model, z[1:n_x])  
 
-    @constraint(model, omega_0[1] + psi[3] == 0)
-    @constraint(model, omega[1,:] .+ y .== 0)
+    @constraint(model, omega[1] + psi[3] == 0)
+    @constraint(model, PI_D[1,:] .+ y .== 0)
     for ind in 1:n_x
         @constraint(model, y[ind] >= psi_lb * x[ind])
         @constraint(model, y[ind] <= psi_ub * x[ind])
@@ -202,8 +203,8 @@ function Robust_Product_Design_Condense_Parameters(N, n_x, gamma, psi_lb, psi_ub
     end
 
 
-    @constraint(model, omega_0[2] - phi[3] == 0)
-    @constraint(model, omega[2,:] .- z .== 0)
+    @constraint(model, omega[2] - phi[3] == 0)
+    @constraint(model, PI_D[2,:] .- z .== 0)
     for ind in 1:n_x
         @constraint(model, z[ind] >= phi_lb * x[ind])
         @constraint(model, z[ind] <= phi_ub * x[ind])
@@ -212,19 +213,19 @@ function Robust_Product_Design_Condense_Parameters(N, n_x, gamma, psi_lb, psi_ub
     end
 
 
-    @constraint(model, delta + psi[2] + phi[1] + eta[1] * gamma - nu0 * omega_0[1] - nu' * omega[1,:] == 0)
-    @constraint(model, delta + psi[1] + phi[2] + eta[2] * gamma - nu0 * omega_0[2] - nu' * omega[2,:] == r0 + r' * x)
+    @constraint(model, delta + psi[2] + phi[1] + eta[1] * gamma - nu0 * omega[1] - nu' * PI_D[1,:] == 0)
+    @constraint(model, delta + psi[1] + phi[2] + eta[2] * gamma - nu0 * omega[2] - nu' * PI_D[2,:] == r0 + r' * x)
 
     @constraint(model, [psi[3], psi[2], psi[1]] in MOI.DualExponentialCone())
     @constraint(model, [phi[3], phi[2], phi[1]] in MOI.DualExponentialCone())
 
-    # @constraint(model, [eta[1];omega_0[1];omega[1,:]] in SecondOrderCone())
-    # @constraint(model, [eta[2];omega_0[2];omega[2,:]] in SecondOrderCone())
+    @constraint(model, [eta[1];omega[1];PI_D[1,:]] in SecondOrderCone())
+    @constraint(model, [eta[2];omega[2];PI_D[2,:]] in SecondOrderCone())
 
-    @constraint(model, 0.0 <= eta[1])
-    @constraint(model, [eta[1];omega_0[1];omega[1,:]] in MOI.NormOneCone(n_x + 2))
-    @constraint(model, 0.0 <= eta[2])
-    @constraint(model, [eta[2];omega_0[2];omega[2,:]] in MOI.NormOneCone(n_x + 2))
+    # @constraint(model, 0.0 <= eta[1])
+    # @constraint(model, [eta[1];omega[1];PI_D[1,:]] in MOI.NormOneCone(n_x + 2))
+    # @constraint(model, 0.0 <= eta[2])
+    # @constraint(model, [eta[2];omega[2];PI_D[2,:]] in MOI.NormOneCone(n_x + 2))
 
     @constraint(model, sum(x) >= 1)
     @objective(model, Max, delta)
