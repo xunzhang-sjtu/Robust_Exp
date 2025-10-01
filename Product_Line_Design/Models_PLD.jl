@@ -34,7 +34,7 @@ function ETO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap)
         end
     end
 
-    @constraint(model, x * c_l >= d_r)
+    @constraint(model, x * c_l .== d_r)
     for ind1 in 1:(N-1)
         @constraint(model, r' * x[ind1,:] >= r' * x[(ind1+1),:] + rev_gap)
     end
@@ -57,7 +57,7 @@ function ETO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap)
 end
 
 
-function RO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,psi_lb,psi_ub,phi_lb,phi_ub,gamma)
+function RO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,psi_lb,psi_ub,phi_lb,phi_ub,gamma,dual_norm)
     model = Model(Mosek.Optimizer)
     set_attribute(model, "QUIET", true)
     # 定义变量
@@ -122,15 +122,23 @@ function RO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,psi_lb,psi_ub,phi_lb,phi_ub,ga
         @constraint(model, [phi_3[n],phi_2[n],phi_1[n]] in MOI.DualExponentialCone())
     end
 
-    @constraint(model, [eta0;lbd0;xi0] in SecondOrderCone())
-    for n in 1:N
-        @constraint(model, [eta[n];lbd[n];xi[n,:]] in SecondOrderCone())
+    if dual_norm == 2
+        @constraint(model, [eta0;lbd0;xi0] in SecondOrderCone())
+        for n in 1:N
+            @constraint(model, [eta[n];lbd[n];xi[n,:]] in SecondOrderCone())
+        end
     end
-    
-    @constraint(model, X * c_l >= d_r)
+    if dual_norm == 1
+        @constraint(model, [eta0;lbd0;xi0] in MOI.NormOneCone(N_x+2))
+        for n in 1:N
+            @constraint(model, [eta[n];lbd[n];xi[n,:]] in MOI.NormOneCone(N_x+2))
+        end
+    end
+
+    @constraint(model, X * c_l .== d_r)
     for ind1 in 1:N
-        @constraint(model, c_l' * Y[ind1,:] <= d_r[ind1] * psi_3[ind1])
-        @constraint(model, c_l' * Z[ind1,:] <= d_r[ind1] * phi_3[ind1])
+        @constraint(model, c_l' * Y[ind1,:] == d_r[ind1] * psi_3[ind1])
+        @constraint(model, c_l' * Z[ind1,:] == d_r[ind1] * phi_3[ind1])
     end
     for ind1 in 1:(N-1)
         @constraint(model, r' * X[ind1,:] >= r' * X[(ind1+1),:] + rev_gap)
