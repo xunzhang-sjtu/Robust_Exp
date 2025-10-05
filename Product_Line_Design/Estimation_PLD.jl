@@ -160,9 +160,9 @@ function estimate_parameters(X::Vector{Matrix{Float64}},Y::Vector{Int64},Z::Matr
     objective_function(theta) = lasso_objective(theta,lambda, X,Y,Z)
     # 使用 L-BFGS 进行优化
     # 注意: L1 正则项不可导，但 L-BFGS 通常能处理得很好，或者可以使用专门为 L1 设计的算法 (如 OWLQN)
-    # result = optimize(objective_function, initial_theta, LBFGS(), Optim.Options(show_trace=false, g_tol=1e-6, iterations=1000))
+    result = optimize(objective_function, initial_theta, LBFGS(), Optim.Options(show_trace=false, g_tol=1e-6, iterations=1000))
     
-    result = optimize(objective_function, initial_theta, OWLQN(lambda), Optim.Options(show_trace=false, g_tol=1e-6, iterations=1000))
+    # result = optimize(objective_function, initial_theta, OWLQN(lambda), Optim.Options(show_trace=false, g_tol=1e-6, iterations=1000))
 
     theta_hat = Optim.minimizer(result)
 
