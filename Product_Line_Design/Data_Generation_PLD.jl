@@ -1,8 +1,8 @@
 function Generate_Wang_Qi_Max_True_Paras(d,p,s)
     # --- 步骤 1: 生成真实参数 θ* ---
     alpha0_star = rand(Uniform(1.0, 2.0))
-    alpha_star = rand(Uniform(-1.0, 1.0), d)
-    beta_star = rand(Uniform(-2.0, 2.0), p)
+    alpha_star = rand(Uniform(-2.0, 2.0), d)
+    beta_star = rand(Uniform(-0.2, 0.2), p)
 
     # 生成稀疏交互矩阵 A*
     A_star = zeros(d, p)
