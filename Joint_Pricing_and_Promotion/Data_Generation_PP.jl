@@ -28,14 +28,30 @@ function generate_strictly_row_diagonally_dominant(n::Int, max_offdiag,offdiag_s
     return Mat
 end
 
-function Generate_Coef(N_u, N,max_offdiag,offdiag_sign)
-    A_true = rand(N,N_u*N+1);
-    for i in 0:(N_u-1)
-        A_P = generate_strictly_row_diagonally_dominant(N, max_offdiag,"zero");
-        A_true[1:N,(i*N+1):(i*N+N)] = A_P
+function Generate_Coef(N_u, N,max_offdiag,offdiag_sign,is_original_setting)
+    if is_original_setting
+        a = [1.0,1.0,1.0]
+        b = [-0.1,-0.2,-0.3]
+        c = [0.8,0.3,0.5]
+        B_true = generate_strictly_row_diagonally_dominant(N, max_offdiag,"zero");
+        A_true = rand(N,N_u*N+1);
+        for i in 0:(N_u-1)
+            A_P = generate_strictly_row_diagonally_dominant(N, max_offdiag,"zero");
+            A_true[1:N,(i*N+1):(i*N+N)] = A_P
+        end
+        A_true[:,N+1] = a
+        for n in 1:N
+            A_true[n,n] = c[n]
+            B_true[n,n] = b[n]
+        end
+    else
+        A_true = rand(N,N_u*N+1);
+        for i in 0:(N_u-1)
+            A_P = generate_strictly_row_diagonally_dominant(N, max_offdiag,"zero");
+            A_true[1:N,(i*N+1):(i*N+N)] = A_P
+        end
+        B_true = generate_strictly_row_diagonally_dominant(N, max_offdiag,offdiag_sign);
     end
-    B_true = generate_strictly_row_diagonally_dominant(N, max_offdiag,offdiag_sign);
-    
     return A_true, B_true
 end
 
