@@ -1,7 +1,8 @@
-function Solve_ETO(N,N_u,K,A,B,P_dag)
+function Solve_ETO(N,N_u,K,A,B,P_dag,Time_Limit)
     N_u = N
     model = Model(Mosek.Optimizer)
     set_attribute(model, "QUIET", true)
+    set_optimizer_attribute(model, "MSK_DPAR_OPTIMIZER_MAX_TIME", Time_Limit) 
     # model = Model(COPT.ConeOptimizer)
     # 定义变量
     @variable(model, rho_0 >= 0)                       # ρ₀ ≥ 0
@@ -71,12 +72,15 @@ function Solve_ETO(N,N_u,K,A,B,P_dag)
     optimize!(model)
     status = JuMP.termination_status(model)
     # solution_summary(model)
-    if status == MOI.OPTIMAL
+    # println("status = ",status)
+    if status == MOI.OPTIMAL || status == MOI.TIME_LIMIT
+        sol_status = string(status)
         obj_val = objective_value(model)
         X_val = value.(X)
         promo = value.(u)
         solve_time = JuMP.solve_time(model)
     else
+        sol_status = "Others"
         obj_val = NaN
         X_val = ones(N,N) .* NaN
         promo = ones(N) .* NaN
@@ -87,13 +91,14 @@ function Solve_ETO(N,N_u,K,A,B,P_dag)
     # println("obj = ",obj_val)
     # println("price = ",price)
     # println("promotion = ",promo)
-    return obj_val, X_val,promo,solve_time
+    return obj_val, X_val,promo,solve_time,sol_status
 end
 
-function Solve_RO(N,N_u,K,A_hat,B_hat,P_dag,psi_lb,psi_ub,phi_lb,phi_ub,gamma,dual_norm)
+function Solve_RO(N,N_u,K,A_hat,B_hat,P_dag,psi_lb,psi_ub,phi_lb,phi_ub,gamma,dual_norm,Time_Limit)
     N_u = N 
     model = Model(Mosek.Optimizer)
     set_attribute(model, "QUIET", true)
+    set_optimizer_attribute(model, "MSK_DPAR_OPTIMIZER_MAX_TIME", Time_Limit) 
     # 定义变量
     @variable(model, delta);                           # 标量 δ
     @variable(model, pi_0[1:N,1:(N_u+1)]);            
@@ -205,16 +210,18 @@ function Solve_RO(N,N_u,K,A_hat,B_hat,P_dag,psi_lb,psi_ub,phi_lb,phi_ub,gamma,du
     optimize!(model)
     status = JuMP.termination_status(model)
     # solution_summary(model)
-    if status == MOI.OPTIMAL
+    if status == MOI.OPTIMAL || status == MOI.TIME_LIMIT
+        sol_status = string(status)
         obj_val = objective_value(model)
         X_val = value.(X)
         promo = value.(u)
         solve_time = JuMP.solve_time(model)
     else
+        sol_status = "Others"
         obj_val = NaN
         X_val = ones(N,N) .* NaN
         promo = ones(N) .* NaN
         solve_time = NaN
     end
-    return obj_val, X_val,promo,solve_time
+    return obj_val, X_val,promo,solve_time,sol_status
 end

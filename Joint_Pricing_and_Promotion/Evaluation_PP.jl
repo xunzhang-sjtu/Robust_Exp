@@ -1,17 +1,23 @@
 function compute_oof(X_given, A, B, u, p_dag)
-    price = sum(X_given .* p_dag,dims=2)[:,1]
-    utilities = ones(N+1)
-    utilities[1:N] = exp.(vec(A * u + B * price))
+    N = length(A[:,1])
+    if any(isnan, X_given)
+        rev = NaN
+        price = ones(N) .* NaN
+    else
+        price = sum(X_given .* p_dag,dims=2)[:,1]
+        utilities = ones(N+1)
+        utilities[1:N] = exp.(vec(A * u + B * price))
 
-    prob = zeros(N)
-    rev = zeros(N)
-    for i in 1:N
-        prob[i] = utilities[i] / sum(utilities)
-        rev[i] = prob[i] * price[i]
+        prob = zeros(N)
+        rev = zeros(N)
+        for i in 1:N
+            prob[i] = utilities[i] / sum(utilities)
+            rev[i] = prob[i] * price[i]
+        end
+        # println("prob = ", prob)
+        # println("rev = ", rev)
+        # println("total rev = ", sum(rev))
     end
-    # println("prob = ", prob)
-    # println("rev = ", rev)
-    # println("total rev = ", sum(rev))
     return sum(rev),price
 end
 

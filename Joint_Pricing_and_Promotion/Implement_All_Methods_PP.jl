@@ -64,9 +64,12 @@ function Run_RO(gamma_list, dual_norm,iterations, N, N_u, K, Input_Data,print_fl
             RST_this["Promo_gamma=$(gamma)"] = Promo_RO
             RST_this["time_gamma=$(gamma)"] = time_RO
             RST_this["Rev_gamma=$(gamma)"] = rev_RO
-            if print_flag
-                println("iter=$(iter),gamma=$(gamma): rev_RO = ",round(rev_RO,digits=6),", price_RO = ",price_RO)
-            end
+            # if print_flag
+            #     println("iter=$(iter),gamma=$(gamma): rev_RO = ",round(rev_RO,digits=6),", price_RO = ",price_RO)
+            # end
+        end
+        if print_flag
+            println("***** iter=$(iter) *******")
         end
         RST_RO["iter=$(iter)_RST"] = RST_this
     end
