@@ -47,7 +47,7 @@ function Generate_Coef(N_u, N,max_offdiag,offdiag_sign,is_original_setting)
     else
         A_true = rand(N,N_u*N+1);
         for i in 0:(N_u-1)
-            A_P = generate_strictly_row_diagonally_dominant(N, max_offdiag,"zero");
+            A_P = -generate_strictly_row_diagonally_dominant(N, max_offdiag,"zero");
             A_true[1:N,(i*N+1):(i*N+N)] = A_P
         end
         B_true = generate_strictly_row_diagonally_dominant(N, max_offdiag,offdiag_sign);
@@ -75,10 +75,10 @@ function Generate_Data(N,S,A,B,P_bar)
     return P_sample,PM_sample,choice_sample,PM_sample_extend
 end
 
-function generate_Input_Data(S_train,iterations, N, N_u, K, offdiag_sign,max_offdiag,P_bar)
+function generate_Input_Data(S_train,iterations, N, N_u, K, offdiag_sign,max_offdiag,P_bar,is_original_setting)
     Input_Data = Dict()
     for iter in 1:iterations
-        A_true, B_true = Generate_Coef(N_u, N, max_offdiag, offdiag_sign);
+        A_true, B_true = Generate_Coef(N_u, N, max_offdiag, offdiag_sign,is_original_setting);
         P_train,PM_train,choice_train,PM_train_extend = Generate_Data(N,S_train,A_true,B_true,P_bar);
 
         Input_Data["iter=$(iter)_A_true"] = A_true;
