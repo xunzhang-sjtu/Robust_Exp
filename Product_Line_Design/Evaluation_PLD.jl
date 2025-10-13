@@ -1,4 +1,9 @@
-function calculate_profit(alp0, alp, beta, A, r0, r, X_val, z_input)
+function calculate_profit(params, r0, r, X_val, z_input)
+    alp0 = params.alpha0
+    alp = params.alpha
+    beta = params.beta
+    A = params.A
+
     V0 = 1.0
     utilities = zeros(N)
     for j in 1:N

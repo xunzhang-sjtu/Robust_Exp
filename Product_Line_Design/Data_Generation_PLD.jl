@@ -1,8 +1,8 @@
 function Generate_Wang_Qi_Max_True_Paras(d,p,s)
     # --- 步骤 1: 生成真实参数 θ* ---
-    alpha0_star = rand(Uniform(1.0, 2.0))
-    alpha_star = rand(Uniform(-2.0, 2.0), d)
-    beta_star = rand(Uniform(-0.2, 0.2), p)
+    alpha0_star = rand(Uniform(0.01, 0.02))
+    alpha_star = rand(Uniform(-1.0, 0.0), d)
+    beta_star = rand(Uniform(-0.02, 0.02), p)
 
     # 生成稀疏交互矩阵 A*
     A_star = zeros(d, p)
@@ -15,14 +15,14 @@ function Generate_Wang_Qi_Max_True_Paras(d,p,s)
     # 为选中的位置赋值
     for idx in selected_indices
         row, col = Tuple(CartesianIndices((d, p))[idx])
-        A_star[row, col] = rand(Uniform(-2.0, 2.0))
+        A_star[row, col] = rand(Uniform(-0.02, 0.02))
     end
 
     theta_true = (alpha0=alpha0_star, alpha=alpha_star, beta=beta_star, A=A_star)
 
     # --- 步骤 2: 生成收益参数 r ---
     r0 = rand(Uniform(0.0, 1.0))
-    r = rand(Uniform(0.0, 1.0), d)
+    r = rand(Uniform(0.0, 0.1), d)
     r_params = (r0=r0, r=r)
 
     return theta_true, r_params

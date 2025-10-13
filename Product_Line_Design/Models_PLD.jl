@@ -1,6 +1,7 @@
-function ETO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,num_c)
+function ETO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,num_c,Time_Limit)
     model = Model(Mosek.Optimizer)
     set_attribute(model, "QUIET", true)
+    set_optimizer_attribute(model, "MSK_DPAR_OPTIMIZER_MAX_TIME", Time_Limit) 
     # 定义变量
     @variable(model, rho_0 >= 0)                       
     @variable(model, rho[1:N] >= 0) 
@@ -35,18 +36,18 @@ function ETO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,num_c)
     end
 
 
-    v_l = zeros(N_x)
-    start_index = 1
-    while start_index <= N_x
-        end_index = start_index + num_c - 1
-        end_index = min(end_index,N_x)
-        v_l = zeros(N_x)
-        v_l[start_index:end_index] = ones(end_index - start_index + 1)
-        @constraint(model, x * v_l .== 1)
-        start_index = start_index + num_c
-    end
+    # v_l = zeros(N_x)
+    # start_index = 1
+    # while start_index <= N_x
+    #     end_index = start_index + num_c - 1
+    #     end_index = min(end_index,N_x)
+    #     v_l = zeros(N_x)
+    #     v_l[start_index:end_index] = ones(end_index - start_index + 1)
+    #     @constraint(model, x * v_l .== 1)
+    #     start_index = start_index + num_c
+    # end
 
-    # @constraint(model, x * c_l .== d_r)
+    @constraint(model, x * c_l .>= d_r)
     for ind1 in 1:(N-1)
         @constraint(model, r' * x[ind1,:] >= r' * x[(ind1+1),:] + rev_gap)
     end
@@ -55,23 +56,26 @@ function ETO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,num_c)
 
     optimize!(model)
     status = JuMP.termination_status(model)
-    if status == MOI.OPTIMAL
+    if status == MOI.OPTIMAL || status == MOI.TIME_LIMIT
+        sol_status = string(status)
         obj_val = objective_value(model)
         X_val = value.(x)
         solve_time = JuMP.solve_time(model)
     else
+        sol_status = "Others"
         obj_val = NaN
         X_val = ones(N_x) .* NaN
         solve_time = NaN
     end
 
-    return obj_val, X_val,solve_time
+    return obj_val, X_val,solve_time,sol_status
 end
 
 
-function RO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,psi_lb,psi_ub,phi_lb,phi_ub,gamma,dual_norm,num_c)
+function RO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,psi_lb,psi_ub,phi_lb,phi_ub,gamma,dual_norm,num_c,Time_Limit)
     model = Model(Mosek.Optimizer)
     set_attribute(model, "QUIET", true)
+    set_optimizer_attribute(model, "MSK_DPAR_OPTIMIZER_MAX_TIME", Time_Limit) 
     # 定义变量
     @variable(model, delta)          
     @variable(model, eta0 >= 0)              
@@ -147,22 +151,23 @@ function RO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,psi_lb,psi_ub,phi_lb,phi_ub,ga
         end
     end
 
-    v_l = zeros(N_x)
-    start_index = 1
-    while start_index <= N_x
-        end_index = start_index + num_c - 1
-        end_index = min(end_index,N_x)
-        v_l = zeros(N_x)
-        v_l[start_index:end_index] = ones(end_index - start_index + 1)
-        @constraint(model, X * v_l .== 1)
-        start_index = start_index + num_c
+    # v_l = zeros(N_x)
+    # start_index = 1
+    # while start_index <= N_x
+    #     end_index = start_index + num_c - 1
+    #     end_index = min(end_index,N_x)
+    #     v_l = zeros(N_x)
+    #     v_l[start_index:end_index] = ones(end_index - start_index + 1)
+    #     @constraint(model, X * v_l .== 1)
+    #     start_index = start_index + num_c
+    # end
+
+    @constraint(model, X * c_l .>= d_r)
+    for ind1 in 1:N
+        @constraint(model, c_l' * Y[ind1,:] <= d_r[ind1] * psi_3[ind1])
+        @constraint(model, c_l' * Z[ind1,:] <= d_r[ind1] * phi_3[ind1])
     end
 
-    # @constraint(model, X * c_l .== d_r)
-    # for ind1 in 1:N
-    #     @constraint(model, c_l' * Y[ind1,:] == d_r[ind1] * psi_3[ind1])
-    #     @constraint(model, c_l' * Z[ind1,:] == d_r[ind1] * phi_3[ind1])
-    # end
     for ind1 in 1:(N-1)
         @constraint(model, r' * X[ind1,:] >= r' * X[(ind1+1),:] + rev_gap)
     end
@@ -173,14 +178,16 @@ function RO_PLD(N,N_x,nu0,nu,r0,r,c_l,d_r,rev_gap,psi_lb,psi_ub,phi_lb,phi_ub,ga
     status = JuMP.termination_status(model)
     # println("status: ", status)
     # solution_summary(model)
-    if status == MOI.OPTIMAL
+    if status == MOI.OPTIMAL  || status == MOI.TIME_LIMIT
+        sol_status = string(status)
         obj_val = objective_value(model)
         X_val = round.(value.(X))
         solve_time = JuMP.solve_time(model)
     else
+        sol_status = "Others"
         obj_val = NaN
         X_val = ones(N,N) .* NaN
         solve_time = NaN
     end
-    return obj_val, X_val,solve_time
+    return obj_val, X_val,solve_time,sol_status
 end
