@@ -1,8 +1,12 @@
-function Generate_Wang_Qi_Max_True_Paras(d,p,s)
+function Generate_Wang_Qi_Max_True_Paras(d,p,s,coef_Params)
     # --- 步骤 1: 生成真实参数 θ* ---
-    alpha0_star = rand(Uniform(0.01, 0.02))
-    alpha_star = rand(Uniform(-1.0, 0.0), d)
-    beta_star = rand(Uniform(-0.02, 0.02), p)
+    # alpha0_star = rand(Uniform(0.01, 0.02))
+    # alpha_star = rand(Uniform(-1.0, 0.0), d)
+    # beta_star = rand(Uniform(-0.02, 0.02), p)
+    alpha0_star = rand(Uniform(coef_Params.alp0_lb, coef_Params.alp0_ub))
+    alpha_star = rand(Uniform(coef_Params.alp_lb, coef_Params.alp_ub), d)
+    beta_star = rand(Uniform(coef_Params.beta_lb, coef_Params.beta_ub), p)
+
 
     # 生成稀疏交互矩阵 A*
     A_star = zeros(d, p)
@@ -15,14 +19,16 @@ function Generate_Wang_Qi_Max_True_Paras(d,p,s)
     # 为选中的位置赋值
     for idx in selected_indices
         row, col = Tuple(CartesianIndices((d, p))[idx])
-        A_star[row, col] = rand(Uniform(-0.02, 0.02))
+        # A_star[row, col] = rand(Uniform(-0.02, 0.02))
+        A_star[row, col] = rand(Uniform(coef_Params.A_lb, coef_Params.A_ub))
     end
-
     theta_true = (alpha0=alpha0_star, alpha=alpha_star, beta=beta_star, A=A_star)
 
     # --- 步骤 2: 生成收益参数 r ---
-    r0 = rand(Uniform(0.0, 1.0))
-    r = rand(Uniform(0.0, 0.1), d)
+    # r0 = rand(Uniform(0.0, 1.0))
+    # r = rand(Uniform(0.0, 0.1), d)
+    r0 = rand(Uniform(coef_Params.r0_lb, coef_Params.r0_ub))
+    r = rand(Uniform(coef_Params.r_lb, coef_Params.r_ub), d)
     r_params = (r0=r0, r=r)
 
     return theta_true, r_params
