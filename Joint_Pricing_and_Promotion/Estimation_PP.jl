@@ -85,3 +85,26 @@ function Estimate_MNL_Para(PM_train_extend, P_train, choice_train,S, N)
     return A_hat,B_hat
 end
 
+
+function Estimate_MNL_Para_Ridge(PM_train_extend, P_train, choice_train,S, N,lambda)
+
+    U_hat = [PM_train_extend[s,:] for s in 1:S];
+    P_hat = [P_train[s,:] for s in 1:S];
+    choices = choice_train;
+
+    # 初始化参数
+    theta_init = randn(N * (2*N + 1));
+
+    # 绑定目标函数和梯度
+    od = Optim.OnceDifferentiable(
+        θ -> neg_log_likelihood(θ, U_hat, P_hat, choices, N) + lambda * norm(θ, 2),
+        (g, θ) -> neg_log_likelihood_grad!(g, θ, U_hat, P_hat, choices, N),
+        theta_init
+    )
+    # 用 BFGS 优化
+    result = optimize(od, theta_init, BFGS())
+    theta_hat = Optim.minimizer(result)
+    A_hat,B_hat = unpack_params(theta_hat, N);
+
+    return A_hat,B_hat
+end

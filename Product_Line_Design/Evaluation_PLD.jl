@@ -33,12 +33,12 @@ function obtain_profits(RST_True_All, RST_ETO_All, RST_RO_All, instances, gamma_
     profit_ETO = zeros(instances);
     profit_RO = zeros(instances, length(gamma_list));
     for ins in 1:instances
-        profit_True[ins] = mean(RST_True_All["RST_True_ins=$(ins)"]["profit"])
-        profit_ETO[ins] = mean(RST_ETO_All["RST_ETO_ins=$(ins)"]["profit"])
+        profit_True[ins] = mean(RST_True_All["ins=$(ins)"]["profit"])
+        profit_ETO[ins] = mean(RST_ETO_All["ins=$(ins)"]["profit"])
         for g_index in 1:length(gamma_list)
             gamma = gamma_list[g_index]
             # println("gamma = $gamma")
-            RST_RO_Gamma = RST_RO_All["RST_RO_ins=$(ins)"]["gamma=$gamma"]
+            RST_RO_Gamma = RST_RO_All["ins=$(ins)"]["gamma=$gamma"]
             profit_RO[ins,g_index] = mean(RST_RO_Gamma["profit"])
         end
     end

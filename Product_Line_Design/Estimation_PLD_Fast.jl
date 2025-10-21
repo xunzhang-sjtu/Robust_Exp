@@ -152,3 +152,9 @@ function estimate_parameters_fast(
 
     return alpha0_hat, alpha_hat, beta_hat, A_hat, result, X_tilde
 end
+
+function Estimation_This(lambda,X_train,Y_train,Z_train,N_x,N_u)
+    alpha0_hat, alpha_hat, beta_hat, A_hat, opt_result, X_tilde = estimate_parameters_fast(X_train, Y_train, Z_train, lambda, N_x, N_u);
+    EST_Para = (alpha0=alpha0_hat, alpha=alpha_hat, beta=beta_hat, A=A_hat)
+    return EST_Para
+end

@@ -10,10 +10,10 @@ function get_default_params_PP()
     Params["offdiag_sign"] = "mix"
     Params["max_offdiag"] = 1.0
     Params["Time_Limit"] = 180.0
-    Params["gamma_list"] = [0.0,0.01,0.02,0.03,0.04,0.06,0.08]
+    Params["gamma_list"] = [0.0, 0.005,0.01, 0.015,0.02, 0.03, 0.04, 0.06, 0.08]
     Params["dual_norm"] = 2
-    Params["psi_lb_coef"] = -20.0
-    Params["phi_lb_coef"] = -20.0
+    Params["psi_lb_coef"] = -10.0
+    Params["phi_lb_coef"] = -10.0
     Params["psi_lb"] = Params["psi_lb_coef"] * ones(Params["N"]) 
     Params["psi_ub"] = 0.0 * ones(Params["N"]) 
     Params["phi_lb"] = Params["phi_lb_coef"] * ones(Params["N"]) 
