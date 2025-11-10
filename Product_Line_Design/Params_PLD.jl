@@ -7,7 +7,7 @@ function get_default_params_PLD()
     Params["d_r"] = ones(Params["N"]) * 2
     Params["rev_gap"] = 0.00001
     Params["N_u"] = 1
-    Params["S_train"] = 50
+    Params["S_train"] = 100
     Params["S_test"] = 1
     Params["m"] = 5
     Params["N_nonzero"] = 5
@@ -20,7 +20,7 @@ function get_default_params_PLD()
     Params["phi_ub"] = 0 * ones(Params["N"])
     Params["num_c"] = 4
     Params["instances"] = 100   
-    Params["seed"] = 2
+    Params["seed"] = 1
 
     Params["coef_this"] = (alp0_lb=0.01, alp0_ub=0.02, 
                             alp_lb=-1.0, alp_ub=0.0, 

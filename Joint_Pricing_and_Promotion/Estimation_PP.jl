@@ -97,7 +97,7 @@ function Estimate_MNL_Para_Ridge(PM_train_extend, P_train, choice_train,S, N,lam
 
     # 绑定目标函数和梯度
     od = Optim.OnceDifferentiable(
-        θ -> neg_log_likelihood(θ, U_hat, P_hat, choices, N) + lambda * norm(θ, 2),
+        θ -> neg_log_likelihood(θ, U_hat, P_hat, choices, N) + lambda * norm(θ, 1),
         (g, θ) -> neg_log_likelihood_grad!(g, θ, U_hat, P_hat, choices, N),
         theta_init
     )
@@ -107,4 +107,85 @@ function Estimate_MNL_Para_Ridge(PM_train_extend, P_train, choice_train,S, N,lam
     A_hat,B_hat = unpack_params(theta_hat, N);
 
     return A_hat,B_hat
+end
+
+
+
+function Estimate_OPT_Model(N,N_u,S,PM_train,P_train,choice_train,is_ridge,lbd)
+    model = Model(Mosek.Optimizer)
+    #（可选：设置求解器参数）
+    set_attribute(model, "QUIET", true)
+    # 变量定义
+    @variable(model, B_esti[1:N,1:N])            
+    @variable(model, A_esti[1:N,1:N_u])            
+    @variable(model, w_0[1:N])            
+    @variable(model, g[1:S])
+    @variable(model, ell[1:S])          
+    @variable(model, y0[1:S])          
+    @variable(model, Y[1:S,1:N])                 
+
+    for n in 1:N
+        for j in 1:N
+            if j != n
+                @constraint(model, A_esti[n,j] == 0.0)
+            end
+        end    
+    end
+
+    for s in 1:S
+        ind_s = Int(choice_train[s])
+        if ind_s == N+1
+            @constraint(model, 1 == g[s])
+        else
+            @constraint(model, PM_train[s,:]' * A_esti[ind_s,:] + P_train[s,:]' * B_esti[ind_s,:] + w_0[ind_s] == g[s])
+        end
+    end
+
+    for s in 1:S
+        @constraint(model, 1 >= y0[s] + sum(Y[s,1:N]))
+    end
+
+    for s in 1:S
+        @constraint(model, [ -ell[s], 1.0, y0[s]] in MOI.ExponentialCone())
+    end
+
+    for s in 1:S
+        for j in 1:N
+            @constraint(model, [ PM_train[s,:]' * A_esti[j,:] + P_train[s,:]' * B_esti[j,:] + w_0[j] - ell[s], 1.0, Y[s,j]] in MOI.ExponentialCone())
+        end
+    end
+
+    if is_ridge
+        @variable(model, t)
+        @constraint(model, [t;vec(B_esti);vec(A_esti);vec(w_0)] in MOI.NormOneCone(N*N + N*N_u + N + 1))
+    end
+
+    # 目标： maximize a_n^T w - v
+    if is_ridge
+        @objective(model, Max, (1/S) * (sum(g) - sum(ell)) - lbd * t)
+    else
+        @objective(model, Max, (1/S) * (sum(g) - sum(ell)))
+    end
+    optimize!(model)
+
+    # 读取并打印结果
+    status = termination_status(model)
+
+    if status == MOI.OPTIMAL || status == MOI.TIME_LIMIT
+        sol_status = string(status)
+        obj_val = objective_value(model)
+        A_hat = value.(A_esti)
+        B_hat = value.(B_esti)
+        Intercept = value.(w_0)
+        solve_time = JuMP.solve_time(model)
+    else
+        sol_status = "Others"
+        obj_val = NaN
+        A_hat = ones(N,N_u) .* NaN
+        B_hat = ones(N,N) .* NaN
+        Intercept = ones(N) .* NaN
+        solve_time = NaN
+    end
+    return A_hat,B_hat,Intercept,obj_val,sol_status,solve_time
+
 end
