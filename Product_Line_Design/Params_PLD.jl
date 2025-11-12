@@ -9,7 +9,7 @@ function get_default_params_PLD()
     Params["N_u"] = 1
     Params["S_train"] = 100
     Params["S_test"] = 1
-    Params["m"] = 5
+    Params["N_Max"] = 5
     Params["N_nonzero"] = 5
     Params["Time_Limit"] = 300
     Params["dual_norm"] = 2

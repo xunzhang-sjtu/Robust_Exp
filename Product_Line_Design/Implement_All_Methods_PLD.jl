@@ -1,3 +1,11 @@
+function Estimation_This(N_Max,N_x,N_u,choice_train,X_train,Z_train, asorrtment_train,is_ridge, lbd)
+    # alpha0_hat, alpha_hat, beta_hat, A_hat, opt_result, X_tilde = estimate_parameters_fast(X_train, choice_train, Z_train, lbd, N_x, N_u);
+    alpha0_hat, alpha_hat, beta_hat, A_hat, solve_time, sol_status, obj_val = Estimate_OPT_Model_PLD(N_Max,N_x,N_u,choice_train,X_train,Z_train, asorrtment_train,is_ridge, lbd)
+    
+    EST_Para = (alpha0=alpha0_hat, alpha=alpha_hat, beta=beta_hat, A=A_hat)
+    return EST_Para
+end
+
 function solve_ETO_This(S_test,N,N_x,theta_Input,theta_true,r_params,c_l,d_r,rev_gap,num_c,Time_Limit,Z_test)
     r0 = r_params.r0; r = r_params.r;
 

@@ -107,11 +107,11 @@ function Generate_Data_this(N_x,N_u,N_nonzero,S_train,S_test,m,coef_Params)
     return Input_Data
 end
 
-function Generate_Data_this_Same_Para(N_x,N_u,N_nonzero,S_train,S_test,m,coef_Params,theta_true_Fixed, r_params_Fixed)
+function Generate_Data_this_Same_Para(N_Max,N_x,N_u,S_train,S_test,theta_true_Fixed, r_params_Fixed)
     theta_true = theta_true_Fixed
     r_params = r_params_Fixed
-    X_train,Y_train,Z_train = Generate_Wang_Qi_Max_True_Data(N_x, N_u, S_train, m,theta_true);
-    X_test,Y_test,Z_test = Generate_Wang_Qi_Max_True_Data(N_x, N_u, S_test, m,theta_true);
+    X_train,Y_train,Z_train = Generate_Wang_Qi_Max_True_Data(N_x, N_u, S_train, N_Max,theta_true);
+    X_test,Y_test,Z_test = Generate_Wang_Qi_Max_True_Data(N_x, N_u, S_test, N_Max,theta_true);
     Input_Data = Dict()
     Input_Data["theta_true"] = theta_true
     Input_Data["r_params"] = r_params
@@ -121,6 +121,12 @@ function Generate_Data_this_Same_Para(N_x,N_u,N_nonzero,S_train,S_test,m,coef_Pa
     Input_Data["X_test"] = X_test
     Input_Data["Y_test"] = Y_test
     Input_Data["Z_test"] = Z_test
+
+    asorrtment_train = Array{Vector{Int64}}(undef,S_train)
+    for s in 1:S_train
+        asorrtment_train[s] = collect(1:N_Max)
+    end
+    Input_Data["asorrtment_train"] = asorrtment_train
     return Input_Data
 end
 
@@ -133,6 +139,6 @@ function Get_Input_Data(Input_Data)
     X_test = Input_Data["X_test"]
     Y_test = Input_Data["Y_test"]
     Z_test = Input_Data["Z_test"]
-
-    return theta_true,r_params,X_train,Y_train,Z_train,X_test,Y_test,Z_test
+    asorrtment_train = Input_Data["asorrtment_train"]
+    return theta_true,r_params,X_train,Y_train,Z_train,asorrtment_train,X_test,Y_test,Z_test
 end
