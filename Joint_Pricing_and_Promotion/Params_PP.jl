@@ -3,10 +3,10 @@ function get_default_params_PP()
     Params["N"] = 3
     Params["N_u"] = 1
     Params["K"] = 30
-    Params["S_train"] = 100
+    Params["S_train"] = 50
     Params["S_test"] = 1000
     Params["P_bar"] = 30.0
-    Params["iterations"] = 100
+    Params["iterations"] = 20
     Params["offdiag_sign"] = "mix"
     Params["max_offdiag"] = 1.0
     Params["Time_Limit"] = 180.0

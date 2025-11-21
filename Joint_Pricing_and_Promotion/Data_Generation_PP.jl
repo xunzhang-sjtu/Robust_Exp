@@ -44,6 +44,14 @@ function Generate_Coef(N_u, N,max_offdiag,offdiag_sign,is_original_setting)
             A_true[n,n] = c[n]
             B_true[n,n] = b[n]
         end
+        w_true = ones(N*(N+N_u+1))
+        n_w = N+N_u+1
+        for j in 1:N
+            w_true[(j-1) * n_w + 1] = A_true[j,N+1]
+            w_true[(j-1) * n_w + 2] = A_true[j,j]
+            w_true[((j-1) * n_w + 3):((j-1) * n_w +2+N)] = B_true[j,:]
+        end
+        w_true = [1.0,0.8,-0.1,1.0,0.3,-0.2,1.0,0.5,-0.3]
     else
         A_true = rand(N,N_u*N+1);
         for i in 0:(N_u-1)
@@ -52,7 +60,7 @@ function Generate_Coef(N_u, N,max_offdiag,offdiag_sign,is_original_setting)
         end
         B_true = generate_strictly_row_diagonally_dominant(N, max_offdiag,offdiag_sign);
     end
-    return A_true, B_true
+    return A_true, B_true,w_true
 end
 
 function Generate_Data(N,S,A,B,P_bar)
@@ -74,6 +82,57 @@ function Generate_Data(N,S,A,B,P_bar)
     end
     return P_sample,PM_sample,choice_sample,PM_sample_extend
 end
+
+
+
+function Generate_Coef_Wide_Format(N_u, N,max_offdiag,offdiag_sign,is_original_setting)
+    if is_original_setting
+        w_true = [1.0,0.8,-0.1,1.0,0.3,-0.2,1.0,0.5,-0.3]
+    else
+        println("Has not Implemented generating random coefficients...")
+    end
+    return w_true
+end
+
+function Generate_Data_Wide_Format(N,N_u,S,w,P_bar)
+    P_sample = round.(rand(S,N) .* P_bar,digits=2);
+    indices = rand(1:N, S)
+    PM_sample = zeros(Int, S, N)
+    PM_sample[CartesianIndex.(1:S, indices)] .= 1
+    choice_sample = zeros(S)
+    Feature_sample = Vector{Matrix{Float64}}(undef, S)
+
+    n_w = N
+    for s in 1:S
+        price_this = P_sample[s, :]
+        prom_this = PM_sample[s, :]
+        feature_this = zeros(N,N*N)
+        for j in 1:N 
+            feature_this[j, (j-1) * n_w + 1] = 1
+            feature_this[j, (j-1) * n_w + 2] = prom_this[j]
+            feature_this[j, (j-1) * n_w + 3] = price_this[j]
+        end
+        Feature_sample[s] = feature_this
+    end
+
+    V0 = 1.0
+    for s in 1:S
+        feature_this = Feature_sample[s]
+        utilities = ones(N) # the N+1 is the no purchase choice
+        for j in 1:N 
+            utilities[j] = feature_this[j,:]' * w
+        end
+        exp_utilities = exp.(utilities)
+        denominator = V0 + sum(exp_utilities)
+        prob_choose_product = exp_utilities ./ denominator
+        prob_choose_default = V0 / denominator
+        choice_probs = vcat(prob_choose_default, prob_choose_product)
+        choice = sample(0:N, Weights(choice_probs))
+        choice_sample[s] = choice
+    end
+    return choice_sample,Feature_sample
+end
+
 
 function generate_Input_Data(S_train,iterations, N, N_u, K, offdiag_sign,max_offdiag,P_bar,is_original_setting)
     Input_Data = Dict()
