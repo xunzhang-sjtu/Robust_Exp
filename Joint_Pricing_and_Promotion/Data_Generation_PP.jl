@@ -95,7 +95,9 @@ function Generate_Coef_Wide_Format(N_u, N,max_offdiag,offdiag_sign,is_original_s
 end
 
 function Generate_Data_Wide_Format(N,N_u,S,w,P_bar)
-    P_sample = round.(rand(S,N) .* P_bar,digits=2);
+    # P_sample = round.(rand(S,N) .* P_bar,digits=2);
+    P_sample = 10 .+ round.(rand(S,N) .* 5,digits=2)
+
     indices = rand(1:N, S)
     PM_sample = zeros(Int, S, N)
     PM_sample[CartesianIndex.(1:S, indices)] .= 1
@@ -134,27 +136,27 @@ function Generate_Data_Wide_Format(N,N_u,S,w,P_bar)
 end
 
 
-function generate_Input_Data(S_train,iterations, N, N_u, K, offdiag_sign,max_offdiag,P_bar,is_original_setting)
-    Input_Data = Dict()
-    for iter in 1:iterations
-        A_true, B_true = Generate_Coef(N_u, N, max_offdiag, offdiag_sign,is_original_setting);
-        P_train,PM_train,choice_train,PM_train_extend = Generate_Data(N,S_train,A_true,B_true,P_bar);
+# function generate_Input_Data(S_train,iterations, N, N_u, K, offdiag_sign,max_offdiag,P_bar,is_original_setting)
+#     Input_Data = Dict()
+#     for iter in 1:iterations
+#         A_true, B_true = Generate_Coef(N_u, N, max_offdiag, offdiag_sign,is_original_setting);
+#         P_train,PM_train,choice_train,PM_train_extend = Generate_Data(N,S_train,A_true,B_true,P_bar);
 
-        Input_Data["iter=$(iter)_A_true"] = A_true;
-        Input_Data["iter=$(iter)_B_true"] = B_true;
-        Input_Data["iter=$(iter)_P_dag"] = round.(rand(N, K) .* P_bar; digits=2);
-        Input_Data["iter=$(iter)_P_train"] = P_train;
-        Input_Data["iter=$(iter)_PM_train_extend"] = PM_train_extend;
-        Input_Data["iter=$(iter)_choice_train"] = choice_train;
+#         Input_Data["iter=$(iter)_A_true"] = A_true;
+#         Input_Data["iter=$(iter)_B_true"] = B_true;
+#         Input_Data["iter=$(iter)_P_dag"] = round.(rand(N, K) .* P_bar; digits=2);
+#         Input_Data["iter=$(iter)_P_train"] = P_train;
+#         Input_Data["iter=$(iter)_PM_train_extend"] = PM_train_extend;
+#         Input_Data["iter=$(iter)_choice_train"] = choice_train;
 
-        A_hat,B_hat = Estimate_MNL_Para(PM_train_extend, P_train, choice_train,S_train, N);
+#         A_hat,B_hat = Estimate_MNL_Para(PM_train_extend, P_train, choice_train,S_train, N);
 
-        Input_Data["iter=$(iter)_A_hat"] = A_hat
-        Input_Data["iter=$(iter)_B_hat"] = B_hat
-        println("****** iter = $(iter) ********")
-    end
-    return Input_Data
-end
+#         Input_Data["iter=$(iter)_A_hat"] = A_hat
+#         Input_Data["iter=$(iter)_B_hat"] = B_hat
+#         println("****** iter = $(iter) ********")
+#     end
+#     return Input_Data
+# end
 
 # function Calculate_Hyper_Param(RO_coef_all, iterations, N, N_u, K, Input_Data)
 #     for iter in 1:iterations

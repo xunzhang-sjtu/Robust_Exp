@@ -33,6 +33,7 @@ function boxplot_RPLD_vs_ETOPLD(data,labels,fig_name)
         palette = mycolors,
         legend = false,
         ylabel = "Normalized Revenue",
+        outliers = false,
         # title = "Revenue Distribution"
     )
 
