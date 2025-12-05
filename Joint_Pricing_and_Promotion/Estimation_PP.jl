@@ -130,7 +130,7 @@ function Estimate_OPT_Model(Feature_sample,choice_train,is_ridge,lbd)
         ind_s = Int(choice_train[s])
         Feat_this = Feature_sample[s]
         if ind_s == 0
-            @constraint(model, 1 == g[s])
+            @constraint(model, 0 == g[s])
         else
             @constraint(model, Feat_this[ind_s,:]' * w == g[s])
         end

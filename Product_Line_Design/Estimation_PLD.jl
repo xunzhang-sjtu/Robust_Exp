@@ -31,7 +31,7 @@ function Estimate_OPT_Model_PLD(N_Max,N_x,N_u,choice_train,X_train,Z_train, asor
     for s in 1:S
         ind_s = Int(choice_train[s])
         if ind_s == 0
-            @constraint(model, 1 == g[s])
+            @constraint(model, 0 == g[s])
         else
             @constraint(model, alpha0 + X_train[s,:][1][ind_s,:]' * alpha + Z_train[s,:]' * beta + X_train[s,:][1][ind_s,:]' * A * Z_train[s,:] == g[s])
         end
