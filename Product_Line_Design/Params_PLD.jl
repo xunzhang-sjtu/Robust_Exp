@@ -14,9 +14,9 @@ function get_default_params_PLD()
     Params["Time_Limit"] = 300
     Params["dual_norm"] = 2
     Params["gamma_list"] = [0.0,0.1,0.2,0.4,0.6,0.8,1.0,1.5,2.0,3.0,5.0]
-    Params["psi_lb"] = -10 * ones(Params["N"])
+    Params["psi_lb"] = -30 * ones(Params["N"])
     Params["psi_ub"] = 0 * ones(Params["N"])
-    Params["phi_lb"] = -10 * ones(Params["N"])
+    Params["phi_lb"] = -30 * ones(Params["N"])
     Params["phi_ub"] = 0 * ones(Params["N"])
     Params["num_c"] = 4
     Params["instances"] = 100   
