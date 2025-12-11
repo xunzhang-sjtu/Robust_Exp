@@ -1,4 +1,4 @@
-function line_plot_RPLD_vs_ETOPLD(profit_ETO,profit_RO,gamma_list,include_std,fig_name)
+function line_plot_RPLD_vs_ETOPLD(profit_ETO,profit_RO,gamma_list,include_std,fig_name,is_display)
     """
     profit comparison between RPLD and ETOPLD
     """
@@ -11,7 +11,9 @@ function line_plot_RPLD_vs_ETOPLD(profit_ETO,profit_RO,gamma_list,include_std,fi
         plot!(gamma_list[1:end_index], RO_ETO_Ratio_Std[1:end_index], marker=:o, xlabel=L"\gamma", ylabel="RPD/ETOPD", label="Std of Profit")
     end
     hline!([1.0], linestyle=:dash, color=:red, label="")
-    display(current())
+    if is_display
+        display(current())
+    end
     savefig(fig_name)
 end
 
