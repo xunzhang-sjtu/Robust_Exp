@@ -21,7 +21,7 @@ function get_default_params_PLD()
     Params["phi_ub"] = 0 * ones(Params["N"])
     Params["num_c"] = 4
     Params["instances"] = 100   
-    Params["seed"] = 2
+    Params["seed"] = 1
 
     Params["coef_backup"] = (alp0_lb=0.01, alp0_ub=0.02, 
                             alp_lb=-1.0, alp_ub=0.0, 
@@ -59,11 +59,18 @@ function get_default_params_PLD()
                         r0_lb=0.0, r0_ub=1.0, 
                         r_lb=0.0, r_ub=0.1); # No improvement over backup, because alpha can be positive
 
-    Params["coef_this"] = (alp0_lb=0.01, alp0_ub=0.02, 
+    Params["coef_backup4"] = (alp0_lb=0.01, alp0_ub=0.02, 
                             alp_lb=-1.0, alp_ub=0.0, 
                             beta_lb=-0.02, beta_ub=0.02, 
                             A_lb=-0.02, A_ub=0.02, 
                             r0_lb=0.0, r0_ub=1.0, 
+                            r_lb=-1.0, r_ub=1.0);
+
+    Params["coef_this"] = (alp0_lb=1.0, alp0_ub=2.0, 
+                            alp_lb=-1.0, alp_ub=1.0, 
+                            beta_lb=-2.0, beta_ub=2.0, 
+                            A_lb=-2.0, A_ub=2.0, 
+                            r0_lb=0.0, r0_ub=1.0,
                             r_lb=-1.0, r_ub=1.0);
 
     return Params
