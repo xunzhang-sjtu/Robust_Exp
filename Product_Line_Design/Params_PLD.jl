@@ -75,3 +75,40 @@ function get_default_params_PLD()
 
     return Params
 end
+
+
+function get_Wang_Qi_Shen_params_PLD()
+    Params = Dict()
+    # --- Parameters for data generation ---
+    Params["N"] = 3
+    Params["N_x"] = 8
+    Params["c_l"] = ones(Params["N_x"])
+    Params["d_r"] = ones(Params["N"]) * 2
+    Params["rev_gap"] = 0.001
+    Params["N_u"] = 10
+    Params["S_train_all"] = [50]
+    Params["S_test"] = 1
+    Params["N_Max"] = 5
+    Params["N_nonzero"] = 10
+    Params["Time_Limit"] = 300
+    Params["dual_norm"] = 2
+    Params["norm_bounds"] = 20
+    Params["gamma_list"] = [0.0,0.05,0.1,0.15,0.2,0.25]
+    Params["psi_lb"] = -5 * ones(Params["N"])
+    Params["psi_ub"] = 0 * ones(Params["N"])
+    Params["phi_lb"] = -5 * ones(Params["N"])
+    Params["phi_ub"] = 0 * ones(Params["N"])
+    Params["num_c"] = 4
+    Params["is_ridge"] = true
+    Params["lambda_all"] = [0.01]
+    Params["instances"] = 50
+    Params["seed"] = 12
+    Params["coef_this"] = (alp0_lb=1.0, alp0_ub=2.0, 
+                            alp_lb=-1.0, alp_ub=1.0, 
+                            beta_lb=-2.0, beta_ub=2.0, 
+                            A_lb=-2.0, A_ub=2.0, 
+                            r0_lb=0.0, r0_ub=1.0,
+                            r_lb=-1.0, r_ub=1.0);
+          
+    return Params
+end
