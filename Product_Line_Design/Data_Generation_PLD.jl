@@ -44,13 +44,13 @@ function Generate_Wang_Qi_Max_True_Data(d, p, n, m,theta_true)
     Y = Vector{Int}(undef, n);             # n 维向量
 
     for i in 1:n
-        z_i = rand(Uniform(-1.0, 1.0), p)
+        z_i = rand(Uniform(-0.1, 0.1), p)
         Z[i, :] = z_i
 
         X_i = zeros(m, d)
         for j in 1:m
             # X_i[j, :] = rand(Uniform(0.0, 1.0), d)
-            X_i[j, :] = rand(0.0:1.0, d)
+            X_i[j, :] = rand(0.0:0.1, d)
         end
         X[i] = X_i
 
