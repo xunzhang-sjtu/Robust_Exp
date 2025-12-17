@@ -50,7 +50,7 @@ function Generate_Wang_Qi_Max_True_Data(d, p, n, m,theta_true)
         X_i = zeros(m, d)
         for j in 1:m
             # X_i[j, :] = rand(Uniform(0.0, 1.0), d)
-            X_i[j, :] = rand(0.0:0.1, d)
+            X_i[j, :] = rand(0.0:1.0, d)
         end
         X[i] = X_i
 
