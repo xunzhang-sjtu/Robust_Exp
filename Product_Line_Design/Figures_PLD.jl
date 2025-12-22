@@ -18,7 +18,7 @@ function line_plot_RPLD_vs_ETOPLD(profit_ETO,profit_RO,gamma_list,include_std,fi
 end
 
 
-function boxplot_RPLD_vs_ETOPLD(data,labels,fig_name)
+function boxplot_RPLD_vs_ETOPLD(data,labels,fig_name,is_display)
     """
     Boxplot comparison between RPLD and ETOPLD
     """
@@ -58,7 +58,9 @@ function boxplot_RPLD_vs_ETOPLD(data,labels,fig_name)
     #     ls = :dash,
     #     label = "Mean trend"
     # )
-    display(current())
+    if is_display
+        display(current())
+    end
     savefig(fig_name)
 end
 

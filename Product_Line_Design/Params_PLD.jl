@@ -4,27 +4,27 @@ function get_default_params_PLD()
     Params["N"] = 3
     Params["N_x"] = 8
     Params["c_l"] = ones(Params["N_x"])
-    Params["d_r"] = ones(Params["N"]) * 3
+    Params["d_r"] = ones(Params["N"]) * 2
     Params["rev_gap"] = 0.001
     Params["N_u"] = 10
-    Params["S_train_all"] = [50,100,200]
+    Params["S_train_all"] = [100,200,500]
     Params["S_test"] = 1
     Params["N_Max"] = 5
     Params["N_nonzero"] = 20
-    Params["Time_Limit"] = 300
+    Params["Time_Limit"] = 600
     Params["dual_norm"] = 2
     Params["norm_bounds"] = 20
-    Params["gamma_list"] = [0.0,0.1,0.2,0.4,0.6,0.8,1.0,1.5,2.0,3.0,5.0]
+    Params["gamma_list"] = [0.0,0.1,0.2,0.4,0.6,0.8,1.0]
     Params["gamma_list_Wang_Qi_Max"] = [0.0,0.01,0.02,0.04,0.06,0.08]
-    Params["psi_lb"] = -30 * ones(Params["N"])
+    Params["psi_lb"] = -5 * ones(Params["N"])
     Params["psi_ub"] = 0 * ones(Params["N"])
-    Params["phi_lb"] = -30 * ones(Params["N"])
+    Params["phi_lb"] = -5 * ones(Params["N"])
     Params["phi_ub"] = 0 * ones(Params["N"])
     Params["num_c"] = 4
     Params["is_ridge"] = true
     Params["lambda_all"] = [0.01]
-    Params["instances"] = 100   
-    Params["seed"] = 1
+    Params["instances"] = 1   
+    Params["seed"] = 2
 
     Params["coef_backup"] = (alp0_lb=0.01, alp0_ub=0.02, 
                             alp_lb=-1.0, alp_ub=0.0, 
