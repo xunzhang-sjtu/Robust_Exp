@@ -23,7 +23,7 @@ function get_default_params_PLD()
     Params["num_c"] = 4
     Params["is_ridge"] = true
     Params["lambda_all"] = [0.01]
-    Params["instances"] = 1   
+    Params["instances"] = 100
     Params["seed"] = 2
 
     Params["coef_backup"] = (alp0_lb=0.01, alp0_ub=0.02, 
