@@ -20,10 +20,10 @@ function get_default_params_PLD()
     Params["psi_ub"] = 0 * ones(Params["N"])
     Params["phi_lb"] = -5 * ones(Params["N"])
     Params["phi_ub"] = 0 * ones(Params["N"])
-    Params["num_c"] = 8
+    Params["num_c"] = 4
     Params["is_ridge"] = true
     Params["lambda_all"] = [0.01]
-    Params["instances"] = 50
+    Params["instances"] = 100
     Params["seed"] = 2
 
     Params["coef_backup"] = (alp0_lb=0.01, alp0_ub=0.02, 
